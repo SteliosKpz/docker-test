@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  angular-app:
+    build:
+      context: ./angular
+      dockerfile: Dockerfile
+    container_name: angular-app
+    volumes:
+      - angular-dist:/usr/share/nginx/html/angular
+
+  vue-app:
+    build:
+      context: ./vue
+      dockerfile: Dockerfile
+    container_name: vue-app
+    volumes:
+      - vue-dist:/usr/share/nginx/html/vue
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8089:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - angular-dist:/usr/share/nginx/html/angular:ro
+      - vue-dist:/usr/share/nginx/html/vue:ro
+    depends_on:
+      - angular-app
+      - vue-app
+
+volumes:
+  angular-dist:
+  vue-dist:
